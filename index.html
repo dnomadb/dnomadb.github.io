@@ -1,1 +1,59 @@
-Hello World
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<title>DIY Elevation Lines</title>
+
+<link href="css/bootstrap.css" rel="stylesheet">
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+ <![endif]-->
+<style type="text/css">
+	html { height: 100%; width: 100%}
+	body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		font: 80% Helvetica Neue, sans-serif;
+	}
+
+	#map_canvas {
+		width: 100%; height: 100%; 
+	}
+	
+	.bigtitle{
+		position: absolute;
+		text-shadow: 0 0 5px black;
+		text-shadow: 0 0 10px black;
+		color: white;
+		left: 15px;
+		bottom: 5px;
+	}
+	#clearwrap{
+	 	position: absolute;
+	 	top: 10px;
+	 	right: 10px;
+	 }
+	 a:link{
+		color: white;
+	}
+	a:visited{
+		color: white;
+	}
+</style>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+<script type="text/javascript" src="latLngToTile2.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script><script type="text/javascript" src="elev_tile_canvas.js">
+</script>
+</head>
+<body onLoad="init()">
+	<div id="map_canvas"></div>
+	<div class="bigtitle"><h1>Elevation Lines</h1><p><b>Click to draw a more detailed area</b></div>
+	<div id="clearwrap" class="btn-group">
+		<button id="clearbutton" class="btn" title="Clear Drawings">Clear Drawings</button>
+		<button id="elevtoggle" class="btn" title="Show Elevation Source Layer - Base-256 Held in RGB">Toggle Elevation</button>
+	</div>
+</body>
+</html>

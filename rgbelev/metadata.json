@@ -1,0 +1,11 @@
+{
+    "attribution": "", 
+    "description": "", 
+    "center": "-116.3672,38.2727,2", 
+    "bounds": "-180,-58.2633,180,84.2672", 
+    "minzoom": "0", 
+    "version": "1.0.0", 
+    "template": "", 
+    "maxzoom": "7", 
+    "name": "ElevTest"
+}

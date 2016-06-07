@@ -27,27 +27,42 @@ var map = new mapboxgl.Map({
 map.on('load', function () {
     map.addSource('temperature', {
         type: 'vector',
-        url: 'mapbox://dnomadb.max-temp'
+        url: 'mapbox://dnomadb.worldclim-max-temp'
     });
 
     // only works with one so far
 
-    // map.addLayer({
-    //     "id": "temperature2070",
-    //     "type": "fill",
-    //     "source": "temperature",
-    //     "source-layer": "worldclimtrisgeojson",
-    //     "paint": {
-    //         "fill-color": {
-    //             property: 'band_2',
-    //             stops: [
-    //                 [-20, "rgba(239,138,98, 0)"],
-    //                 [500, "rgba(239,138,98, 0)"]
-    //             ]
-    //         }
-    //     }
-    // }, 'water');
+    map.addLayer({
+        "id": "temperature2070",
+        "type": "fill",
+        "source": "temperature",
+        "source-layer": "worldclimtrisgeojson",
+        "paint": {
+            "fill-color": {
+                property: 'band_3',
+                stops: [
+                    [-20, "rgba(250,111,116,0)"],
+                    [200, "rgba(250,111,116,0)"]
+                ]
+            }
+        }
+    }, 'water');
 
+    map.addLayer({
+        "id": "temperature2050",
+        "type": "fill",
+        "source": "temperature",
+        "source-layer": "worldclimtrisgeojson",
+        "paint": {
+            "fill-color": {
+                property: 'band_2',
+                stops: [
+                    [-20, "rgba(179,108,163,0)"],
+                    [200, "rgba(179,108,163,0)"]
+                ]
+            }
+        }
+    }, 'water');
 
     map.addLayer({
         "id": "temperature2016",
@@ -58,8 +73,8 @@ map.on('load', function () {
             "fill-color": {
                 property: 'band_1',
                 stops: [
-                    [-20, "rgba(103,169,207, 0)"],
-                    [500, "rgba(103,169,207, 0)"]
+                    [200, "rgba(62,113,154,0)"],
+                    [500, "rgba(62,113,154,0)"]
                 ]
             }
         }
@@ -68,26 +83,41 @@ map.on('load', function () {
     map.on("click", function(e) {
         var features = map.queryRenderedFeatures(e.point, { layers: ["temperature2016"] });
         if (features.length) {
+            console.log(features[0].properties)
             // only works w/ one so far
-            // map.setPaintProperty('temperature2070', 'fill-color', {
-            //     property: 'band_2',
-            //     stops: [
-            //         [-20, "rgba(239,138,98, 0)"],
-            //         [features[0].properties.band_1 - 20, "rgba(239,138,98, 0)"],
-            //         [features[0].properties.band_1, "rgba(239,138,98, 1)"],
-            //         [features[0].properties.band_1 + 20, "rgba(239,138,98, 0)"],
-            //         [500, "rgba(239,138,98, 0)"]
-            //     ]
-            // });
+            map.setPaintProperty('temperature2070', 'fill-color', {
+                property: 'band_3',
+                stops: [
+                    [features[0].properties.band_1 - 50, "rgba(250,111,116,0)"],
+                    [features[0].properties.band_1 - 20, "rgba(250,111,116,0)"],
+                    [features[0].properties.band_1 - 10, "rgba(250,111,116,1)"],
+                    [features[0].properties.band_1 + 10, "rgba(250,111,116,1)"],
+                    [features[0].properties.band_1 + 20, "rgba(250,111,116,0)"],
+                    [features[0].properties.band_1 + 50, "rgba(250,111,116,0)"]
+                ]
+            });
+
+            map.setPaintProperty('temperature2050', 'fill-color', {
+                property: 'band_2',
+                stops: [
+                    [features[0].properties.band_1 - 50, "rgba(179,108,163,0)"],
+                    [features[0].properties.band_1 - 20, "rgba(179,108,163,0)"],
+                    [features[0].properties.band_1 - 10, "rgba(179,108,163,1)"],
+                    [features[0].properties.band_1 + 10, "rgba(179,108,163,1)"],
+                    [features[0].properties.band_1 + 20, "rgba(179,108,163,0)"],
+                    [features[0].properties.band_1 + 50, "rgba(179,108,163,0)"]
+                ]
+            });
 
             map.setPaintProperty('temperature2016', 'fill-color', {
                 property: 'band_1',
                 stops: [
-                    [-20, "rgba(103,169,207, 0)"],
-                    [features[0].properties.band_1 - 20, "rgba(103,169,207, 0)"],
-                    [features[0].properties.band_1, "rgba(103,169,207, 1)"],
-                    [features[0].properties.band_1 + 20, "rgba(103,169,207, 0)"],
-                    [500, "rgba(103,169,207, 0)"]
+                    [features[0].properties.band_1 - 50, "rgba(62,113,154,0)"],
+                    [features[0].properties.band_1 - 20, "rgba(62,113,154,0)"],
+                    [features[0].properties.band_1 - 10, "rgba(62,113,154,1)"],
+                    [features[0].properties.band_1 + 10, "rgba(62,113,154,1)"],
+                    [features[0].properties.band_1 + 20, "rgba(62,113,154,0)"],
+                    [features[0].properties.band_1 + 50, "rgba(62,113,154,0)"]
                 ]
             });
         }

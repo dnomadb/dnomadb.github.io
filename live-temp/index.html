@@ -27,27 +27,28 @@ var map = new mapboxgl.Map({
 map.on('load', function () {
     map.addSource('temperature', {
         type: 'vector',
-        url: 'mapbox://dnomadb.worldclim-tri'
+        url: 'mapbox://mapbox.weather-dev'
     });
     map.addLayer({
         "id": "temperature",
         "type": "fill",
         "source": "temperature",
-        "source-layer": "worldgeojson",
+        "source-layer": "now",
         "paint": {
             "fill-color": {
-                property: 'band_1',
+                property: 'temp',
                 stops: [
                     [-20, '#1B2733'],
                     [0, '#124445'],
-                    [50, '#2A6044'],
-                    [180, '#637737'],
-                    [250, '#AC853A'],
-                    [300, '#F48C68']
+                    [5, '#2A6044'],
+                    [18, '#637737'],
+                    [25, '#AC853A'],
+                    [30, '#F48C68']
                 ]
-            }
+            },
+            "fill-opacity": 0.5
         }
-    }, 'water');
+    });
 });
 
 

@@ -18,7 +18,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v8',
+    style: 'mapbox://styles/mapbox/dark-v8',
     hash: true,
     zoom: 13,
     center: [-122.447303, 37.753574]
@@ -38,15 +38,55 @@ map.on('load', function () {
             "fill-color": {
                 property: 'temp',
                 stops: [
-                    [-20, '#1B2733'],
-                    [0, '#124445'],
-                    [5, '#2A6044'],
-                    [18, '#637737'],
-                    [25, '#AC853A'],
-                    [30, '#F48C68']
+                [-20, "rgba(252,141,89,0)"],
+                [10, "rgba(255,255,191,0)"],
+                [40, "rgba(153,213,148,0)"]
                 ]
             },
             "fill-opacity": 0.5
+        }
+    });
+
+    map.addLayer({
+        "id": "temp-hover",
+        "type": "line",
+        "source": "temperature",
+        "source-layer": "now",
+        "layout": {},
+        "paint": {
+            "line-color": "#ffffff",
+            "line-width": 2
+        },
+        "filter": ["==", "qt", ""]
+    });
+    var c = 0;
+    map.on("mousemove", function(e) {
+        c ++
+
+        if ((c % 5) == 0) {
+            var features = map.queryRenderedFeatures(e.point, { layers: ["temperature"] });
+            if (features.length) {
+                map.setFilter("temp-hover", ["==", "qt", features[0].properties.qt]);
+            } else {
+                map.setFilter("temp-hover", ["==", "qt", ""]);
+            }
+        }
+    });
+
+    map.on("click", function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ["temperature"] });
+        if (features.length) {
+
+            map.setPaintProperty('temperature', 'fill-color', {
+                property: 'temp',
+                stops: [
+                    [features[0].properties.temp - 5, "rgba(252,141,89,0)"],
+                    [features[0].properties.temp - 2, "rgba(252,141,89,1)"],
+                    [features[0].properties.temp, "rgba(255,255,191,1)"],
+                    [features[0].properties.temp + 2, "rgba(153,213,148,1)"],
+                    [features[0].properties.temp + 5, "rgba(153,213,148,0)"]
+                ]
+            });
         }
     });
 });

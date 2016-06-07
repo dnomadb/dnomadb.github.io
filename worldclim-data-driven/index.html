@@ -18,7 +18,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v8',
+    style: 'mapbox://styles/mapbox/dark-v8',
     hash: true,
     zoom: 13,
     center: [-122.447303, 37.753574]
@@ -27,29 +27,72 @@ var map = new mapboxgl.Map({
 map.on('load', function () {
     map.addSource('temperature', {
         type: 'vector',
-        url: 'mapbox://dnomadb.worldclim-tri'
+        url: 'mapbox://dnomadb.max-temp'
     });
+
+    // only works with one so far
+
+    // map.addLayer({
+    //     "id": "temperature2070",
+    //     "type": "fill",
+    //     "source": "temperature",
+    //     "source-layer": "worldclimtrisgeojson",
+    //     "paint": {
+    //         "fill-color": {
+    //             property: 'band_2',
+    //             stops: [
+    //                 [-20, "rgba(239,138,98, 0)"],
+    //                 [500, "rgba(239,138,98, 0)"]
+    //             ]
+    //         }
+    //     }
+    // }, 'water');
+
+
     map.addLayer({
-        "id": "temperature",
+        "id": "temperature2016",
         "type": "fill",
         "source": "temperature",
-        "source-layer": "worldgeojson",
+        "source-layer": "worldclimtrisgeojson",
         "paint": {
             "fill-color": {
                 property: 'band_1',
                 stops: [
-                    [-20, '#1B2733'],
-                    [0, '#124445'],
-                    [50, '#2A6044'],
-                    [180, '#637737'],
-                    [250, '#AC853A'],
-                    [300, '#F48C68']
+                    [-20, "rgba(103,169,207, 0)"],
+                    [500, "rgba(103,169,207, 0)"]
                 ]
             }
         }
     }, 'water');
-});
 
+    map.on("click", function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ["temperature2016"] });
+        if (features.length) {
+            // only works w/ one so far
+            // map.setPaintProperty('temperature2070', 'fill-color', {
+            //     property: 'band_2',
+            //     stops: [
+            //         [-20, "rgba(239,138,98, 0)"],
+            //         [features[0].properties.band_1 - 20, "rgba(239,138,98, 0)"],
+            //         [features[0].properties.band_1, "rgba(239,138,98, 1)"],
+            //         [features[0].properties.band_1 + 20, "rgba(239,138,98, 0)"],
+            //         [500, "rgba(239,138,98, 0)"]
+            //     ]
+            // });
+
+            map.setPaintProperty('temperature2016', 'fill-color', {
+                property: 'band_1',
+                stops: [
+                    [-20, "rgba(103,169,207, 0)"],
+                    [features[0].properties.band_1 - 20, "rgba(103,169,207, 0)"],
+                    [features[0].properties.band_1, "rgba(103,169,207, 1)"],
+                    [features[0].properties.band_1 + 20, "rgba(103,169,207, 0)"],
+                    [500, "rgba(103,169,207, 0)"]
+                ]
+            });
+        }
+    });
+});
 
 
 </script>

@@ -17,6 +17,7 @@
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16239299/0f9a6222-3799-11e6-9cb4-f4e740b71224.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16239382/6cdc58c8-3799-11e6-807a-41ce100a8564.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16242246/716261fa-37a6-11e6-9c12-555ab64a0c93.jpg)
+# Tiles ~= image chips
 # How would we match?
 # Fourier image convolution
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/18069395/a8ba1644-6dfb-11e6-967b-4821e3791fe1.png)

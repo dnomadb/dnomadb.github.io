@@ -12,10 +12,15 @@
 # ![Images](images/density2.png)
 # A [Map](https://api.tiles.mapbox.com/v4/dnomadb.density-test/page.html?access_token=pk.eyJ1IjoibWF0dCIsImEiOiJTUHZkajU0In0.oB-OGTMFtpkga8vC48HjIg)
 # ![Images](images/gcp1.png)
+# ~1/2 are control, ~1/2 are validation
+# Image Chips
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16239299/0f9a6222-3799-11e6-9cb4-f4e740b71224.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16239382/6cdc58c8-3799-11e6-807a-41ce100a8564.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/16242246/716261fa-37a6-11e6-9c12-555ab64a0c93.jpg)
+# How would we match?
+# Fourier image convolution
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/18069395/a8ba1644-6dfb-11e6-967b-4821e3791fe1.png)
+# With images of similar rotation and scale, we can match in the planar space
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/18069402/bf48420a-6dfb-11e6-9d27-a0a4d3ac359d.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/18069441/fdaa6aa0-6dfb-11e6-9b55-f70f23b6c77e.png)
 # ![Images](https://cloud.githubusercontent.com/assets/5084513/18069544/ba3daea2-6dfc-11e6-873b-07cdb0cafffb.png)

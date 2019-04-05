@@ -5,14 +5,15 @@ const A = new mapboxgl.Map({
     container: 'map-A',
     style: 'mapbox://styles/dnomadb/cju1e509819t31fqik5tkprmn',
     center: [-120, 40],
-    zoom: 9
+    zoom: 9,
+    hash: true
 });
 
 const B = new mapboxgl.Map({
     container: 'map-B',
     style: 'mapbox://styles/dnomadb/cju1e509819t31fqik5tkprmn',
     center: [-120, 40],
-    zoom: 9
+    zoom: 9,
+    hash: true
 });
-
 syncMove(A, B);

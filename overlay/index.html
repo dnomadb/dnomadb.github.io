@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Panshahp?</title>
+    <title>Overlay Pansharpening</title>
     <meta
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
@@ -23,10 +23,74 @@
         bottom: 0;
         width: 100%;
       }
+      #panel {
+        position: absolute;
+        width: auto;
+        right: 10px;
+        top: 10px;
+        background-color: white;
+        padding: 5px;
+        border-radius: 5px;
+        font-family: Helvetica, Arial, Sans-Serif;
+      }
+      input[type=checkbox] + label {
+        display: block;
+        margin: 0.2em;
+        cursor: pointer;
+        padding: 0.2em;
+      }
+
+      input[type=checkbox] {
+        display: none;
+      }
+
+      input[type=checkbox] + label:before {
+        content: "\2714";
+        border: 0.1em solid #000;
+        border-radius: 0.2em;
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        padding-left: 0.2em;
+        padding-bottom: 0.3em;
+        margin-right: 0.2em;
+        vertical-align: bottom;
+        color: transparent;
+        transition: .2s;
+      }
+
+      input[type=checkbox] + label:active:before {
+        transform: scale(0);
+      }
+
+      input[type=checkbox]:checked + label:before {
+        background-color: steelblue;
+        border-color: steelblue;
+        color: #fff;
+      }
+
+      input[type=checkbox]:disabled + label:before {
+        transform: scale(1);
+        border-color: #aaa;
+      }
+
+      input[type=checkbox]:checked:disabled + label:before {
+        transform: scale(1);
+        background-color: #bfb;
+        border-color: #bfb;
+      }
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <div id="panel">
+      <form>
+      <input type="checkbox" id="color" name="color" value="color" checked>
+      <label for="color">Color</label>
+        <input type="checkbox" id="pan" name="pan" value="pan" checked>
+      <label for="pan">Panchromatic</label>
+    </form>
+    </div>
     <script>
       mapboxgl.accessToken =
         "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
@@ -35,43 +99,41 @@
         style: {
           version: 8,
           sources: {
-            "raster-tiles": {
+            "color-tiles": {
               type: "raster",
               url: "mapbox://mapbox.satellite",
-              tileSize: 8192
+              tileSize: 2048
             }
           },
           layers: [
             {
-              id: "simple-tiles",
+              id: "color-tiles",
               type: "raster",
-              source: "raster-tiles",
+              source: "color-tiles",
               minzoom: 0,
               maxzoom: 22,
               paint: {
                 "raster-resampling": "nearest",
                 "raster-opacity": 1,
-                // "raster-hue-rotate": 133,
-                "raster-contrast": 0.25,
-                "raster-saturation": 0.75
+                "raster-saturation": 0.75,
               }
             }
           ]
         },
         center: [-74.5, 40],
         zoom: 4,
-        minZoom: 4,
+        minZoom: 2,
         hash: true
       });
       map.on("load", function() {
-        map.addSource("img1", {
+        map.addSource("pan-tiles", {
           type: "raster",
           url: "mapbox://mapbox.satellite",
           tileSize: 256
         });
         map.addLayer({
-          id: "hillshading",
-          source: "img1",
+          id: "pan-tiles",
+          source: "pan-tiles",
           type: "raster",
           paint: {
             "raster-resampling": "nearest",
@@ -79,6 +141,24 @@
             "raster-contrast": 0.25,
             "raster-saturation": -1
           }
+        });
+        const pancheck = document.querySelector("input[name=pan]");
+        const colorcheck = document.querySelector("input[name=color]");
+        pancheck.addEventListener( 'change', () => {
+            if(pancheck.checked) {
+                map.setPaintProperty('pan-tiles', 'raster-opacity', 0.6);
+            } else {
+                map.setPaintProperty('pan-tiles', 'raster-opacity', 0);
+            }
+        });
+        colorcheck.addEventListener( 'change', () => {
+            if(colorcheck.checked) {
+                map.setPaintProperty('pan-tiles', 'raster-opacity', 0.6);
+                map.setPaintProperty('color-tiles', 'raster-opacity', 1);
+            } else {
+                map.setPaintProperty('pan-tiles', 'raster-opacity', 1);
+                map.setPaintProperty('color-tiles', 'raster-opacity', 0);
+            }
         });
       });
     </script>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>:eyes:</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/empty-v9",
+        center: [-74.5, 40],
+        zoom: 9
+      });
+      map.on("load", () => {
+        map.addSource("256", {
+          type: "raster",
+          url: "mapbox://mapbox.satellite",
+          tileSize: 256
+        });
+        map.addLayer({
+          id: "satellite",
+          source: "256",
+          type: "raster"
+        });
+        map.on("mousemove", (e) => {
+          const r = (e.point.y / map.getContainer().offsetHeight) * 360;
+          const c = (e.point.x / map.getContainer().offsetWidth) * 2 - 1;
+          map.setPaintProperty('satellite', 'raster-hue-rotate', r);
+          map.setPaintProperty('satellite', 'raster-saturation', c);
+        });
+      });
+    </script>
+  </body>
+</html>

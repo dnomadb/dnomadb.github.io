@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Add hillshading</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/cjaudgl840gn32rnrepcb9b9g', // the outdoors-v10 style but without Hillshade layers
+    center: [-102.88532,47.85912],
+    zoom: 17
+});
+
+map.on('load', function () {
+    map.addSource('dem', {
+        "type": "raster-dem",
+        "tiles": ["https://b.tiles.mapbox.com/v4/dnomadb.high-res-earth-bumps/{z}/{x}/{y}@2x.pngraw?access_token=pk.eyJ1IjoibWF0dCIsImEiOiJTUHZkajU0In0.oB-OGTMFtpkga8vC48HjIg"]
+    });
+    map.addLayer({
+        "id": "hillshading",
+        "source": "dem",
+        "type": "hillshade",
+        "paint": {
+          "hillshade-exaggeration": 0.25
+        }
+    // insert below waterway-river-canal-shadow;
+    // where hillshading sits in the Mapbox Outdoors style
+    }, 'waterway-river-canal-shadow');
+});
+</script>
+
+</body>
+</html>

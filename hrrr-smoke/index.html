@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>HRRR Smoke</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-88.13734351262877, 35.137451890638886],
+        zoom: 4,
+				hash: true,
+    });
+
+    map.on('load', function () {
+				const searchParams = new URLSearchParams(window.location.search);
+				const hourAdd = searchParams.get("hour_offset") || '0';
+        const layers = map.getStyle().layers;
+        // Find the index of the first symbol layer in the map style
+        let firstSymbolId;
+        for (let i = 0; i < layers.length; i++) {
+            if (layers[i].type === 'symbol') {
+                firstSymbolId = layers[i].id;
+                break;
+            }
+        }
+				const RN = new Date();
+				const currentHour = RN.getUTCHours() + parseInt(hourAdd);
+				const currentDay = RN.getUTCDate();
+				const currentMonth = ('' + (RN.getUTCMonth() + 1)).padStart(2, '0');
+        map.addSource('smoke', {
+					'type': 'raster',
+					'tileSize': 1024,
+					'attribution': 'wmts layer from <a href="https://hwp-viz.gsd.esrl.noaa.gov/smoke/index.html" target="_blank">NOAA HRRR-SMOKE</a>',
+					'tiles': [
+							`https://hwp-viz.gsd.esrl.noaa.gov/wmts/image/hrrr_smoke?var=sfc_smoke&x={x}&y={y}&z={z}&time=2020-${currentMonth}-${currentDay}T${currentHour}:00:00.000Z&modelrun=&level=0`
+					]
+        });
+        map.addLayer(
+					{
+							'id': 'simple-tiles',
+							'type': 'raster',
+							'source': 'smoke',
+							'minzoom': 0,
+							'maxzoom': 22,
+							'paint': {
+								'raster-opacity': 0.5,
+								'raster-contrast': 0.5,
+								'raster-resampling': 'nearest'
+							}
+					},
+            firstSymbolId
+        );
+    });
+</script>
+
+</body>
+</html>

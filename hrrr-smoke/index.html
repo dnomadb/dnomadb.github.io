@@ -17,7 +17,7 @@
 	mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
     const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/dnomadb/ckf4kvmjv00f619qlgmrdtzdc',
         center: [-88.13734351262877, 35.137451890638886],
         zoom: 4,
 				hash: true,
@@ -27,6 +27,7 @@
 				const searchParams = new URLSearchParams(window.location.search);
 				const hourAdd = searchParams.get("hour_offset") || '0';
         const layers = map.getStyle().layers;
+
         // Find the index of the first symbol layer in the map style
         let firstSymbolId;
         for (let i = 0; i < layers.length; i++) {
@@ -37,6 +38,7 @@
         }
 				const RN = new Date();
 				const currentHour = RN.getUTCHours() + parseInt(hourAdd);
+				const modelHour = RN.getUTCHours();
 				const currentDay = RN.getUTCDate();
 				const currentMonth = ('' + (RN.getUTCMonth() + 1)).padStart(2, '0');
         map.addSource('smoke', {
@@ -57,10 +59,11 @@
 							'paint': {
 								'raster-opacity': 0.5,
 								'raster-contrast': 0.5,
+								'raster-hue-rotate': 180,
 								'raster-resampling': 'nearest'
 							}
 					},
-            firstSymbolId
+            "admin-0-boundary-disputed"
         );
     });
 </script>

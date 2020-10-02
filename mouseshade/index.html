@@ -31,7 +31,8 @@
         container: "map",
         style: "mapbox://styles/mapbox/outdoors-v9",
         center: [-74.5, 40],
-        zoom: 9
+        zoom: 9,
+        hash: true
       });
       map.on("load", () => {
         map.addSource('dem', {

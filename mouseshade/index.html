@@ -8,7 +8,10 @@
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
     <style>
       body {
         margin: 0;
@@ -35,26 +38,38 @@
         hash: true
       });
       map.on("load", () => {
-        map.addSource('dem', {
-          'type': 'raster-dem',
-          'url': 'mapbox://mapbox.terrain-rgb'
+        map.addSource("dem", {
+          type: "raster-dem",
+          url: "mapbox://mapbox.terrain-rgb"
         });
-        map.addLayer(
-          {
-            'id': 'hillshading',
-            'source': 'dem',
-            'type': 'hillshade'
+        map.addLayer({
+          id: "hillshading",
+          source: "dem",
+          type: "hillshade"
           // insert below waterway-river-canal-shadow;
           // where hillshading sits in the Mapbox Outdoors style
-          }
+        });
+        map.on("mousemove", e => {
+          const r = (e.point.y / map.getContainer().offsetHeight) * 359;
+          const c = e.point.x / map.getContainer().offsetWidth;
+          const a = (e.point.x + e.point.y) * 200;
+          const b = (e.point.x / map.getContainer().offsetHeight) * 200;
+          const z = (e.point.y / map.getContainer().offsetWidth) * 200;
+          map.setPaintProperty(
+            "hillshading",
+            "hillshade-illumination-direction",
+            r
           );
+          map.setPaintProperty("hillshading", "hillshade-exaggeration", c);
+          map.setPaintProperty("contour copy", "fill-color", [
+            "rgba",
+            ["floor", ["*", ["+", ["sin", ["/", ["get", "ele"], a]], 1], 128]],
+            ["floor", ["*", ["+", ["sin", ["/", ["get", "ele"], b]], 1], 128]],
+            ["floor", ["*", ["+", ["sin", ["/", ["get", "ele"], z]], 1], 128]],
+            1
+          ]);
         });
-        map.on("mousemove", (e) => {
-          const r = (e.point.y / map.getContainer().offsetHeight) * 360;
-          const c = (e.point.x / map.getContainer().offsetWidth);
-          map.setPaintProperty('hillshading', 'hillshade-illumination-direction', r);
-          map.setPaintProperty('hillshading', 'hillshade-exaggeration', c);
-        });
+      });
     </script>
   </body>
 </html>

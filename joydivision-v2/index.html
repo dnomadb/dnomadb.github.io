@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Add 3D terrain to a map</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+      const map = new mapboxgl.Map({
+        container: "map",
+        zoom: 9.5,
+        center: [-122.489, 47.4058],
+        pitch: 60,
+        bearing: -8,
+        hash: true,
+        style: {
+          version: 8,
+          sources: {
+            "joy-div": {
+              type: "vector",
+              tiles: [
+                `https://api.tiles.mapbox.com/v4/dnomadb.love-will-terrain-us-apart/0/0/0.vector.pbf?access_token=${mapboxgl.accessToken}`
+              ]
+            },
+            water: {
+              type: "vector",
+              url: "mapbox://mapbox.mapbox-streets-v8"
+            }
+          },
+          layers: [
+            {
+              id: "background",
+              type: "background",
+              paint: { "background-color": "black" }
+            },
+            {
+              id: "joy-div",
+              type: "line",
+              source: "joy-div",
+              "source-layer": "elevation_lines",
+              paint: {
+                "line-width": 2,
+                "line-color": "white"
+              }
+            },
+            {
+              id: "water",
+              source: "water",
+              "source-layer": "water",
+              type: "fill",
+              paint: {
+                "fill-color": "black"
+              }
+            }
+          ]
+        }
+      });
+
+      map.on("load", function() {
+        map.addSource("mapbox-dem", {
+          type: "raster-dem",
+          url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+          tileSize: 512,
+          maxzoom: 14
+        });
+        // add the DEM source as a terrain layer with exaggerated height
+        map.setTerrain({
+          source: "mapbox-dem",
+          exaggeration: [
+            "interpolate",
+            ["linear", 0.5],
+            ["zoom"],
+            0,
+            100,
+            4,
+            10,
+            20,
+            1
+          ]
+        });
+        // add a sky layer that will show when the map is highly pitched
+        map.addLayer({
+          id: "sky",
+          type: "sky",
+          paint: {
+            "sky-type": "atmosphere",
+            "sky-atmosphere-sun": [0.0, 0.0],
+            "sky-atmosphere-sun-intensity": 15,
+            "sky-atmosphere-color": "black"
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

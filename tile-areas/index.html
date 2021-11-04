@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Tile Sizes</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:52px; width:100%; }
+        #info {
+          position: absolute;
+          width: 100%;
+          bottom: 0;
+          height: 52px;
+          background-color: black;
+          color: #2b6926;
+          text-align: center;
+          vertical-align: middle;
+          line-height: 52px;
+        }
+        .info-label {
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          text-transform: uppercase;
+          font-weight: 200;
+          font-size: 20px;
+        }
+        .info-highlight {
+          font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
+<div id='map'></div>
+<div id='info'><span class='info-label'>Tile <span id='tile' class='info-highlight'>-</span> (<span id='aream' class='info-highlight'>-</span> sq m) is <span id='proportion' class='info-highlight'>-</span> the area of an equatorial tile at <span id='zoom' class='info-highlight'>-</span></span></div>
+<script src='spherical-mercator.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v9',
+    center: [-79.4512, 43.6568],
+    zoom: 13,
+    hash: true
+});
+
+const merc = new SphericalMercator({
+    size: 256
+});
+const toRad = Math.PI / 180;
+
+const tile = {
+  "type": "Feature",
+  "properties": {},
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[]]
+  }
+}
+
+const getArea = (lat, zoom) => {
+  const CIRC = 40.075 * 1e6;
+  const size = CIRC * Math.cos(lat * toRad) / Math.pow(2, zoom);
+
+  return size * size;
+};
+
+const getTile = (event) => {
+  const lngLat = event.lngLat
+  const zoom = Math.max(Math.round(map.getZoom()) + 2, 2);
+  let [x, y] = merc.px([lngLat.lng, lngLat.lat], zoom);
+  x = Math.floor(x / 256);
+  y = Math.floor(y / 256);
+  const [w, s, e, n] = merc.bbox(x, y, zoom);
+
+  tile.geometry.coordinates[0] = [
+    [w, s], [e, s], [e, n], [w, n], [w, s]
+  ];
+  const cArea = getArea(lngLat.lat, zoom);
+  const eArea = getArea(0, zoom);
+  const turfArea = turf.area(tile);
+  const proportion = Math.round(cArea / eArea * 100);
+  const scaled = turf.transformScale(tile, Math.sqrt(eArea / cArea));
+  document.getElementById("tile").textContent = `${zoom}/${x}/${y}`
+  document.getElementById("proportion").textContent = `~${proportion}%`
+  document.getElementById("zoom").textContent = `Z${zoom}`
+  document.getElementById("aream").textContent = Math.round(turfArea);
+  map.getSource('tile').setData(tile);
+  map.getSource('Etile').setData(scaled)
+
+}
+
+map.on("load", () => {
+//   console.log('NOTE: Capped at zoom 7');
+  map.addLayer({
+    'id': 'Etile',
+    'type': 'fill',
+    'source': {
+        'type': 'geojson',
+        'data': {"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[]]}},
+    },
+    'layout': {},
+    'paint': {
+        'fill-color': 'lime',
+        'fill-opacity': 0.1
+    }
+  });
+  map.addLayer({
+    'id': 'tile',
+    'type': 'fill',
+    'source': {
+        'type': 'geojson',
+        'data': tile,
+    },
+    'layout': {},
+    'paint': {
+        'fill-color': 'lime',
+        'fill-opacity': 0.25
+    }
+  });
+  getTile({lngLat: map.getCenter()})
+  map.on("mousemove", getTile);
+  map.on("click", getTile);
+});
+
+map.addControl(new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+}));
+</script>
+
+</body>
+</html>

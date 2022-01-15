@@ -31,13 +31,29 @@ body { margin: 0; padding: 0; }
         bottom: 0;
         width: 100%;
     }
+    .label {
+      position: absolute;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.5);
+      font-family: monospace;
+      padding: 5px;
+    }
+    .left {
+      left: 0;
+    }
+    .right {
+      right: 0;
+    }
 </style>
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
 <div id="comparison-container">
     <div id="before" class="map"></div>
     <div id="after" class="map"></div>
+
 </div>
+<div class="label left"><b>1936</b></div>
+<div class="label right"><b>~2018</b></div>
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
     const beforeMap = new mapboxgl.Map({

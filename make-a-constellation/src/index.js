@@ -27,6 +27,38 @@ const draw = new MapboxDraw({
     uncombine_features: false,
   },
   defaultMode: "draw_line_string",
+  styles: [
+    {
+        "id": "gl-draw-line",
+        "type": "line",
+        "filter": ["all", ["==", "$type", "LineString"], ["!=", "mode", "static"]],
+        "layout": {
+          "line-cap": "round",
+          "line-join": "round"
+        },
+        "paint": {
+          "line-color": "#fff",
+          "line-opacity": 0.25,
+          "line-dasharray": [0.2, 2],
+          "line-width": 2
+        }
+    },
+    {
+        "id": "gl-draw-line-static",
+        "type": "line",
+        "filter": ["all", ["==", "$type", "LineString"], ["!=", "mode", "static"]],
+        "layout": {
+          "line-cap": "round",
+          "line-join": "round"
+        },
+        "paint": {
+          "line-color": "#fff",
+          "line-opacity": 0.75,
+          "line-dasharray": [0.2, 2],
+          "line-width": 2
+        }
+    }
+  ]
 });
 
 map.addControl(draw, "top-right");

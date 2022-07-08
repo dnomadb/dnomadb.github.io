@@ -64,7 +64,7 @@ const draw = new MapboxDraw({
 map.addControl(draw, "top-right");
 
 map.on("load", () => {
-  const constellationString = url.searchParams.get("constellation");
+  const constellationString = url.searchParams.get("carving");
   if (constellationString) {
     const geom = Geometry.parseTwkb(Buffer.from(constellationString, "hex"));
     draw.set(flatten(geom.toGeoJSON()));
@@ -92,12 +92,12 @@ const updateConstellation = () => {
       .toString("hex");
 
     url.searchParams.set(
-      "constellation",
+      "carving",
       Geometry.parseGeoJSON(constellation).toTwkb().toString("hex")
     );
     window.history.pushState(null, "", url.toString());
   } else {
-    url.searchParams.delete("constellation");
+    url.searchParams.delete("carving");
     window.history.pushState(null, "", url.toString());
   }
 };

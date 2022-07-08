@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.3.0",
+    "@turf/flatten": "^6.5.0",
     "buffer": "^6.0.3",
     "gzip-js": "^0.3.2",
     "mapbox-gl": "^2.9.1",

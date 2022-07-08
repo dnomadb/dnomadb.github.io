@@ -1,6 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Geometry } from "wkx";
+import flatten from "@turf/flatten";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
@@ -11,8 +12,6 @@ const map = new mapboxgl.Map({
   center: [0, 0],
   hash: true,
 });
-
-// const query = new URLSearchParams(window.location.search);
 
 const url = new URL(window.location);
 
@@ -67,21 +66,13 @@ map.on("load", () => {
   const constellationString = url.searchParams.get("constellation");
   if (constellationString) {
     const geom = Geometry.parseTwkb(Buffer.from(constellationString, "hex"));
-    draw.set({
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: geom.toGeoJSON(),
-          properties: {},
-        },
-      ],
-    });
+    draw.set(flatten(geom.toGeoJSON()));
   }
 });
 
 const updateConstellation = () => {
   const features = draw.getAll().features;
+  
   if (features.length) {
     const constellation = {
       type: "MultiLineString",

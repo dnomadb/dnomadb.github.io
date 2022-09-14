@@ -90,6 +90,25 @@
         hash: true,
       });
 
+      const deepIter = (o) => {
+        return o.map((v) => {
+          if (chroma.valid(v) && typeof v !== "number") {
+            const color = chroma.rgb(
+              chroma(v)
+                .rgb()
+                .map((color) => {
+                  return 255 - color;
+                })
+            );
+            return color.set("hsl.h", (color.get("hsl.h") + 180) % 360).hex();
+          } else if (Array.isArray(v)) {
+            return deepIter(v);
+          } else {
+            return v;
+          }
+        });
+      };
+
       afterMap.once("style.load", () => {
         afterMap.setFog({}); // Set the default atmosphere style
         const style = afterMap.getStyle();
@@ -109,22 +128,23 @@
                     .set("hsl.h", (color.get("hsl.h") + 180) % 360)
                     .hex();
                 } else {
-                  const expression = v.map((exA) => {
-                    if (chroma.valid(exA) && typeof exA !== "number") {
-                      const color = chroma.rgb(
-                        chroma(exA)
-                          .rgb()
-                          .map((color) => {
-                            return 255 - color;
-                          })
-                      );
-                      return color
-                        .set("hsl.h", (color.get("hsl.h") + 180) % 360)
-                        .hex();
-                    } else {
-                      return exA;
-                    }
-                  });
+                  const expression = deepIter(v);
+                  // const expression = v.map((exA) => {
+                  //   if (chroma.valid(exA) && typeof exA !== "number") {
+                  //     const color = chroma.rgb(
+                  //       chroma(exA)
+                  //         .rgb()
+                  //         .map((color) => {
+                  //           return 255 - color;
+                  //         })
+                  //     );
+                  //     return color
+                  //       .set("hsl.h", (color.get("hsl.h") + 180) % 360)
+                  //       .hex();
+                  //   } else {
+                  //     return exA;
+                  //   }
+                  // });
                   layer.paint[k] = expression;
                 }
               }

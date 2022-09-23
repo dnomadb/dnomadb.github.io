@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Add a raster tile source</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    /* Style The Dropdown Button */
+.dropbtn {
+  background-color: #000000;
+  color: white;
+  padding: 10px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  left: 10px;
+  top: 10px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #eaafa0}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.selected {
+    background-color: rgb(166, 169, 168);
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #5c5d5c;
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="dropdown">
+    <button class="dropbtn"><code>tileSize</code></button>
+    <div class="dropdown-content" id="tilesize">
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn"><code>resampling</code></button>
+    <div class="dropdown-content" id="resampling">
+    </div>
+  </div>
+<script>
+    const r = /tileSize=\d+/;
+    const br = /resampling=[a-z]+/;
+    const query = new URLSearchParams(window.location.search);
+    const tileSize = parseInt(query.get("tileSize")) || 256;
+    const resampling = query.get("resampling") || "linear";
+    if (!query.get("tileSize")) {
+        query.set("tileSize", tileSize);
+        window.location.search = query.toString();
+      }
+
+    if (!query.get("resampling")) {
+        query.set("resampling", resampling);
+        window.location.search = query.toString();
+    }
+
+    ["linear", "nearest"].forEach((a) => {
+        const tag = document.createElement('a');
+        tag.setAttribute('href', window.location.href.replace(br, `resampling=${a}`));
+        tag.innerHTML = `<code>${a}</code>`;
+        if (resampling === a) {
+            tag.classList.add("selected");
+        }
+        document.getElementById("resampling").appendChild(tag);
+    });
+
+    
+    [...new Array(11)].forEach((_, i) => {
+        const a = 2 ** (5 + i);
+        const tag = document.createElement('a');
+        tag.setAttribute('href', window.location.href.replace(r, `tileSize=${a}`));
+        tag.innerHTML = `<code>${a}</code>`;
+        if (a === tileSize) {
+            tag.classList.add("selected");
+        }
+        document.getElementById("tilesize").appendChild(tag);
+    });
+    const map = new maplibregl.Map({
+        container: 'map', // container id
+        style: {
+            'version': 8,
+            'sources': {
+                'raster-tiles': {
+                    'type': 'raster',
+                    'tiles': [
+                        'https://stamen-tiles-b.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
+                    ],
+                    'tileSize': tileSize,
+                    'attribution':
+                        'Map tiles by <a target="_top" rel="noopener" href="http://stamen.com">Stamen Design</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+                }
+            },
+            'layers': [
+                {
+                    'id': 'simple-tiles',
+                    'type': 'raster',
+                    'source': 'raster-tiles',
+                    'paint': {
+                        'raster-resampling': resampling
+                    },
+                    'minzoom': 0,
+                    'maxzoom': 22
+                }
+            ]
+        },
+        center: [-122, 38], // starting position
+        zoom: 8,
+    });
+</script>
+
+</body>
+</html>

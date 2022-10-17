@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Portal</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        filter: invert(100%) hue-rotate(180deg);
+      }
+      #map2 {
+        position: absolute;
+        width: 512px;
+        height: 512px;
+        cursor: move;
+        user-select: none;
+        left: 0;
+        right: 0;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="map2"></div>
+    <!-- <div id="map3"></div> -->
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+      const map = new mapboxgl.Map({
+        container: "map", // container ID
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: "mapbox://styles/mapbox/satellite-v9", // style URL
+        center: [-100, 0], // starting position [lng, lat]
+        zoom: 2.5, // starting zoom
+        // interactive: false,
+        projection: "globe", // display the map as a 3D globe
+      });
+
+      const mapContainer = document.getElementById("map");
+      const ctrContainer = document.getElementById("map2");
+
+      ctrContainer.style.top = `${mapContainer.offsetHeight / 2 - 256}px`;
+      ctrContainer.style.left = `${mapContainer.offsetWidth / 2 - 256}px`;
+
+      const map2 = new mapboxgl.Map({
+        container: "map2", // container ID
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: "mapbox://styles/mapbox/satellite-v9", // style URL
+        center: [-100, 0], // starting position [lng, lat]
+        zoom: 2.25, // starting zoom
+        interactive: false,
+        projection: "globe", // display the map as a 3D globe
+      });
+
+      const whatADrag = (dragmap) => {
+        // The current position of mouse
+        let x = 0;
+        let y = 0;
+
+        // Query the element
+        const ele = dragmap.getContainer();
+
+        // Handle the mousedown event
+        // that's triggered when user drags the element
+        const mouseDownHandler = function (e) {
+          // Get the current mouse position
+          x = e.clientX;
+          y = e.clientY;
+
+          // Attach the listeners to `document`
+          document.addEventListener("mousemove", mouseMoveHandler);
+          document.addEventListener("mouseup", mouseUpHandler);
+        };
+
+        const mouseMoveHandler = function (e) {
+          // How far the mouse has been moved
+          const dx = e.clientX - x;
+          const dy = e.clientY - y;
+
+          // Set the position of element
+          ele.style.top = `${ele.offsetTop + dy}px`;
+          ele.style.left = `${ele.offsetLeft + dx}px`;
+
+          // Reassign the position of mouse
+          x = e.clientX;
+          y = e.clientY;
+          dragmap.setCenter(
+            map.unproject([ele.offsetLeft + dx + 256, ele.offsetTop + dy + 256])
+          );
+        };
+
+        const mouseUpHandler = function () {
+          // Remove the handlers of `mousemove` and `mouseup`
+          document.removeEventListener("mousemove", mouseMoveHandler);
+          document.removeEventListener("mouseup", mouseUpHandler);
+        };
+
+        ele.addEventListener("mousedown", mouseDownHandler);
+      };
+      whatADrag(map2);
+      map.on("move", () => {
+        map2.setCenter(
+          map.unproject([
+            ctrContainer.offsetLeft + 256,
+            ctrContainer.offsetTop + 256,
+          ])
+        );
+        map2.setZoom(map.getZoom() - 0.25);
+      });
+    </script>
+  </body>
+</html>

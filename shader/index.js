@@ -22,9 +22,10 @@ var fragmentSource = `
     void main() {
         float elevationScale = 0.1;
         vec4 color = texture2D(uTexture, vTexCoord);
-        float e = mod(-10000.0 + (color.r * 255.0 * 256.0 * 256.0 + color.g * 255.0 * 256.0 + color.b * 255.0) * 0.1, 10.0);
-
-        gl_FragColor = vec4(vec3(e * elevationScale), 1.0);
+        float i = -10000.0 + (color.r * 255.0 * 256.0 * 256.0 + color.g * 255.0 * 256.0 + color.b * 255.0) * 0.1;
+        // float e = mod(-10000.0 + (color.r * 255.0 * 256.0 * 256.0 + color.g * 255.0 * 256.0 + color.b * 255.0) * 0.1, 10.0);
+        float e = (mod(i, 5.0) - ((mod(floor(i / 5.0), 2.0)) * 5.0)) * (mod(floor(i / 5.0), -2.0) * 2.0 + 1.0);
+        gl_FragColor = vec4(vec3(e * elevationScale), 0.75);
         // if (e < 500.0) {
         //     gl_FragColor = vec4(0.0, 0.0, 1.0, 0.5);
         // }

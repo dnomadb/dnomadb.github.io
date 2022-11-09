@@ -35,9 +35,10 @@ var fragmentSource = `
      `
 const map = new mapboxgl.Map({
     container: document.getElementById('map'),
-    style: 'mapbox://styles/mapbox/light-v8',
+    style: 'mapbox://styles/mapbox/empty-v8',
     center: [145, -16],
-    zoom: 0
+    zoom: 0,
+    hash: true
 });
 map.on('load', () => {
     let customlayer = new mapboxgl.TextureLayer(

@@ -37,15 +37,11 @@ const map = new mapboxgl.Map({
   hash: true,
 });
 map.on("load", () => {
-  const customlayer = new mapboxgl.TextureLayer(
+  const customlayer = new TextureLayer(
     "test",
     {
       type: "raster",
-      tiles: [
-        "https://a.tiles.mapbox.com/v4/mapbox.terrain-rgb/{z}/{x}/{y}@2x.pngraw?access_token=pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ",
-      ],
-      attribution:
-        '<a href="https://docs.mapbox.com/data/tilesets/reference/mapbox-terrain-rgb-v1/">Mapbox terrain-rgb</a>',
+      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
     },
     setupLayer,
     render
@@ -80,7 +76,7 @@ function setupLayer(map, gl) {
 }
 function render(gl, matrix, tiles) {
   gl.useProgram(program);
-  
+
   tiles.forEach((tile) => {
     if (!tile.texture) return;
     gl.activeTexture(gl.TEXTURE0);
@@ -94,8 +90,7 @@ function render(gl, matrix, tiles) {
     gl.bindBuffer(gl.ARRAY_BUFFER, program.vertexBuffer);
     gl.enableVertexAttribArray(program.a_pos);
     gl.vertexAttribPointer(program.aPos, 2, gl.FLOAT, false, 0, 0);
-
-    gl.uniformMatrix4fv(program.uMatrix, false, tile.tileID.posMatrix);
+    gl.uniformMatrix4fv(program.uMatrix, false, tile.tileID.projMatrix);
     gl.uniform1i(program.uTexture, 0);
     gl.depthFunc(gl.LESS);
     gl.enable(gl.BLEND);

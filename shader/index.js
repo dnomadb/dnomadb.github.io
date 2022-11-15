@@ -21,10 +21,10 @@ var fragmentSource = `
     // uniform elevation
 
     void main() {
-        float elevationScale = 0.15;
-        float interval = 5.0;
+        float elevationScale = 15.0;
+        float interval = 0.05;
         vec4 color = texture2D(uTexture, vTexCoord);
-        float i = -10000.0 + (color.r * 255.0 * 256.0 * 256.0 + color.g * 255.0 * 256.0 + color.b * 255.0) * 0.1;
+        float i = -10000.0 + (color.r * 255.0 * 256.0 + color.g * 255.0 + color.b) * 0.1;
         float e = (mod(i, interval) - ((mod(floor(i / interval), 2.0)) * interval)) * (mod(floor(i / interval), -2.0) * 2.0 + 1.0);
         gl_FragColor = vec4(0, 1.0 - e * elevationScale, 1.0 - e * elevationScale, 1);
     }           
@@ -41,6 +41,7 @@ map.on("load", () => {
     "test",
     {
       type: "raster",
+    //   tiles: ["http://localhost:3000/tiles/rgb/{z}/{x}/{y}.png"]
       url: "mapbox://mapbox.mapbox-terrain-dem-v1",
     },
     setupLayer,

@@ -38,7 +38,7 @@ const makeTileCover = (features, zoom) => {
     )
   ];
 
-  return {
+  return [{
     type: "FeatureCollection",
     features: tiles.map(t => {
       return {
@@ -47,7 +47,7 @@ const makeTileCover = (features, zoom) => {
         geometry: tilebelt.tileToGeoJSON(tilebelt.quadkeyToTile(t))
       };
     })
-  };
+  }, tiles.length];
 };
 
 const updateArea = e => {
@@ -59,7 +59,7 @@ const updateArea = e => {
     const area = Math.round(turf.area(data) * 1e-4) / 100;
     bbox = turf.bboxPolygon(turf.bbox(data));
     const bboxArea = Math.round(turf.area(bbox) * 1e-4) / 100;
-    const tileCover = makeTileCover(data.features, zoom);
+    const [tileCover, nTiles] = makeTileCover(data.features, zoom);
     const tileCoverArea = Math.round(turf.area(tileCover) * 1e-4) / 100;
     map.getSource("tile-cover").setData(tileCover);
     map.getSource("bbox").setData(bbox);
@@ -72,6 +72,9 @@ const updateArea = e => {
     document.getElementById(
       "tilecover-area"
     ).innerHTML = `<p>Tilecover area: <strong>${tileCoverArea} km²</strong></p>`;
+    document.getElementById(
+      "tilecover-count"
+    ).innerHTML = `<p>Total tiles: <strong>${nTiles}</strong></p>`;
   } else {
     map
       .getSource("tile-cover")
@@ -88,6 +91,7 @@ const updateArea = e => {
     document.getElementById("poly-area").innerHTML = "";
     document.getElementById("bbox-area").innerHTML = "";
     document.getElementById("tilecover-area").innerHTML = "";
+    document.getElementById("tilecover-count").innerHTML = "";
   }
 };
 map.on("draw.create", updateArea);

@@ -9,9 +9,16 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
     <script src="./mapbox-tl.umd.js"></script>
+    <script src="./debug.js"></script>
 </head>
 <body class="fill-window">
     <div id="map" class="fill-window"></div>
+    <div id="slider-div">
+    <div class="slider">
+        <input id="slr" type="range" min="0" max="1000" value="20">
+        <p>Sea Level: <span id="rangeValue">10</span>m</p>
+        </div>
+    </div>
     <script src="./index.js"></script>
 </body>
 </html>

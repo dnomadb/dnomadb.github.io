@@ -34,7 +34,7 @@ var fragmentSource = `
      `;
 const map = new mapboxgl.Map({
   container: "map",
-  style: "mapbox://styles/mapbox/streets-v11",
+  style: "mapbox://styles/mapbox/outdoors-v11",
   center: [145, -16],
   zoom: 0,
   hash: true,

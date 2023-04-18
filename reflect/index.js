@@ -8,7 +8,7 @@ if (order == "cave") {
   document.getElementById("map-B").classList.add("flip");
 }
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjbGdsOHRpYWcxbWxwM3NueWYwYWYwbms0In0.zb8hlW2-BNebPuQ2hhiAuw';
 const A = new mapboxgl.Map({
     container: 'map-A',
     style: 'mapbox://styles/dnomadb/ckkeptams00lg18pkvkaj1i6g',

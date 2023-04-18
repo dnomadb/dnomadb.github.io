@@ -12,7 +12,7 @@ if (!url.searchParams.get("styleA") || !url.searchParams.get("styleB")) {
 }
 
 mapboxgl.accessToken =
-  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjbGdsOHRpYWcxbWxwM3NueWYwYWYwbms0In0.zb8hlW2-BNebPuQ2hhiAuw";
 const A = new mapboxgl.Map({
   container: "map-A",
   style: styleA,

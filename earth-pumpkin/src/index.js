@@ -4,7 +4,7 @@ import { Geometry } from "wkx";
 import flatten from "@turf/flatten";
 
 mapboxgl.accessToken =
-  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjbGdsOHRpYWcxbWxwM3NueWYwYWYwbms0In0.zb8hlW2-BNebPuQ2hhiAuw";
 const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/dnomadb/cl513fn1e000014mn8e1lxj2g",

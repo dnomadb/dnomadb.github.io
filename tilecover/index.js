@@ -1,7 +1,7 @@
 const cover = require("@mapbox/tile-cover");
 const tilebelt = require("@mapbox/tilebelt");
 mapboxgl.accessToken =
-  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjaW16aXFsZzUwNHJmdjdra3h0Nmd2cjY1In0.SqzkaKalXxQaPhQLjodQcQ";
+  "pk.eyJ1IjoiZG5vbWFkYiIsImEiOiJjbGdsOHRpYWcxbWxwM3NueWYwYWYwbms0In0.zb8hlW2-BNebPuQ2hhiAuw";
 const map = new mapboxgl.Map({
   container: "map", // container id
   style: "mapbox://styles/mapbox/dark-v9", //hosted style id

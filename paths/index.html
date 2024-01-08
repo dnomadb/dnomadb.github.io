@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Display a map on a webpage</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      const uniq = (value, index, self) => {
+        return self.indexOf(value) === index;
+      };
+
+      const network2Geojson = (network) => {
+        const linkMap = [...new Array(network.nodes.length)].map((i) => {
+          return [];
+        });
+        const edges = {
+          type: "FeatureCollection",
+          features: network.links.map((edge, i) => {
+            const src = parseInt(edge.source);
+            const target = parseInt(edge.target);
+            linkMap[src].push(i);
+            linkMap[target].push(i);
+            return {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: [
+                  network.nodes[edge.source].coordinate,
+                  network.nodes[edge.target].coordinate,
+                ],
+              },
+              id: i,
+              properties: {
+                weight: edge.weight,
+              },
+            };
+          }),
+        };
+        const nodes = {
+          type: "FeatureCollection",
+          features: network.nodes.map((n, i) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: n.coordinate,
+              },
+              id: parseInt(n.id),
+              properties: {
+                id: parseInt(n.id),
+              },
+            };
+          }),
+        };
+
+        return [
+          nodes,
+          edges,
+          linkMap.map((l) => {
+            return l.filter(uniq);
+          }),
+        ];
+      };
+      (async function main() {
+        const data = await fetch("./places.json");
+        const network = await data.json();
+        const [nodes, edges, linkMap] = network2Geojson(network);
+        mapboxgl.accessToken =
+          "pk.eyJ1Ijoic3RhbWVuIiwiYSI6IlpkZEtuS1EifQ.jiH_c9ShtBwtqH9RdG40mw";
+        const map = new mapboxgl.Map({
+          container: "map", // container ID
+          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+          style: "mapbox://styles/mapbox/dark-v11", // style URL
+          center: [0, 0], // starting position [lng, lat]
+          projection: "naturalEarth",
+          zoom: 1.2, // starting zoom
+        });
+
+        map.on("load", () => {
+          map.addSource("edges", {
+            type: "geojson",
+            data: edges,
+            promoteId: true,
+          });
+
+          map.addLayer({
+            id: "edges",
+            source: "edges",
+            type: "line",
+            paint: {
+              "line-color": "chartreuse",
+              "line-width": [
+                "case",
+                ["boolean", ["feature-state", "hover"], false],
+                1,
+                0.5,
+              ],
+            },
+          });
+
+          map.addSource("nodes", {
+            type: "geojson",
+            data: nodes,
+            promoteId: true,
+          });
+
+          map.addLayer({
+            id: "nodes",
+            source: "nodes",
+            type: "circle",
+            paint: {
+              "circle-color": "chartreuse",
+              "circle-opacity": [
+                "case",
+                ["boolean", ["feature-state", "hover"], false],
+                1,
+                0.1,
+              ],
+              "circle-radius": 5,
+            },
+          });
+          let nodeID = null;
+          let activeEdges = [];
+          //   let activeNodes = [];
+          map.on("mousemove", "nodes", (e) => {
+            if (nodeID) {
+              map.removeFeatureState({
+                source: "nodes",
+                id: nodeID,
+              });
+            }
+            if (activeEdges.length) {
+              activeEdges.forEach((edgeID) => {
+                map.removeFeatureState({
+                  source: "edges",
+                  id: edgeID,
+                });
+              });
+            }
+            map.getCanvas().style.cursor = "pointer";
+
+            nodeID = e.features[0].id;
+            activeEdges = linkMap[nodeID];
+            map.setFeatureState(
+              {
+                source: "nodes",
+                id: nodeID,
+              },
+              {
+                hover: true,
+              }
+            );
+            activeEdges.forEach((edgeID) => {
+              map.setFeatureState(
+                {
+                  source: "edges",
+                  id: edgeID,
+                },
+                {
+                  hover: true,
+                }
+              );
+            });
+          });
+          map.on("click", "nodes", (e) => {
+            const traversedNodes = [];
+            let distanceTraveled = 0;
+            let nids = [e.features[0].id];
+
+            const growth = () => {
+              const edges = nids
+                .map((nid) => {
+                  return linkMap[nid];
+                })
+                .flat();
+              nids = edges
+                .filter((eid) => {
+                  return network.links[eid].weight < 1e3;
+                })
+                .map((eid) => {
+                  return [network.links[eid].source, network.links[eid].target];
+                })
+                .flat()
+                .filter(uniq)
+                .filter((n) => {
+                  return traversedNodes.indexOf(n) === -1 || Math.random() < 0.18;
+                });
+              const totalDistance = edges.filter(uniq).reduce((dist, nid) => {
+                return network.links[nid].weight + dist;
+              }, 0);
+              distanceTraveled += totalDistance;
+              traversedNodes.forEach((nid) => {
+                if (nids.indexOf(nid) === -1) {
+                  map.setFeatureState(
+                    {
+                      source: "nodes",
+                      id: nid,
+                    },
+                    {
+                      hover: false,
+                    }
+                  );
+                }
+              });
+              nids.forEach((n) => {
+                map.setFeatureState(
+                  {
+                    source: "nodes",
+                    id: n,
+                  },
+                  {
+                    hover: true,
+                  }
+                );
+              });
+
+              nids.forEach((eid) => {
+                traversedNodes.push(eid);
+              });
+
+              if (nids.length !== 0) {
+                window.setTimeout(growth, 20);
+              } else {
+                console.log(`Traversed a total of ${distanceTraveled}`);
+              }
+            };
+            window.setTimeout(growth, 20);
+            // break
+            // }
+          });
+          map.on("mouseleave", "nodes", () => {
+            if (nodeID) {
+              map.setFeatureState(
+                {
+                  source: "nodes",
+                  id: nodeID,
+                },
+                {
+                  hover: false,
+                }
+              );
+              if (activeEdges.length) {
+                activeEdges.forEach((edgeID) => {
+                  map.setFeatureState(
+                    {
+                      source: "edges",
+                      id: edgeID,
+                    },
+                    {
+                      hover: false,
+                    }
+                  );
+                });
+              }
+            }
+
+            map.getCanvas().style.cursor = "";
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

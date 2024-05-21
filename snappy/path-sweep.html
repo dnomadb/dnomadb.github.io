@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<title>Sweep Snap</title>
+
+<style type="text/css">
+    html { height: 100%; width: 100%}
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map_canvas {
+      width: 100%;
+      height: 100%; 
+    }
+</style>
+<link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet'>
+<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.3/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.3/mapbox.css' rel='stylesheet' />
+</head>
+<body>
+    <div id="map_canvas"></div>
+    <script type="text/javascript" src="general-geo-utils.js"></script>
+    <script type="text/javascript" src="path-edge-detect.js"></script>
+    <!--<script type="text/javascript" src="sweep-search.js"></script>worker: have to reference it in development for it to not cache-->
+</body>
+</html>

@@ -1,0 +1,85 @@
+{
+  "version": 8,
+  "name": "Matterhorn",
+  "metadata": {},
+  "sources": {
+    "crater": {
+      "url": "mapbox://dnomadb.sf-lidar-test-1",
+      "type": "vector"
+    },
+    "satellite": {
+      "url": "mapbox://mapbox.satellite",
+      "type": "raster"
+    }
+  },
+  "pitch": 60,
+  "zoom": 17.79,
+  "center": [-122.4,37.8],
+  "light": {},
+  "sprite": "mapbox://sprites/mapbox/light-v9",
+  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "layout": {},
+      "paint": {
+        "background-color": "hsl(55, 11%, 96%)"
+      }
+    },
+    {
+      "id": "sat",
+      "type": "raster",
+      "source": "satellite",
+      "paint": {
+        "raster-opacity": 1,
+        "raster-brightness-max": 0.2
+      }
+    },
+    {
+      "id": "points",
+      "type": "circle",
+      "source": "crater",
+      "source-layer": "lidar",
+      "paint": {
+        "circle-radius": 1.1,
+        "circle-opacity": 1,
+        "circle-color": "#6A789B",
+        "circle-z-offset": {
+          "stops": [[0, 0], [500, 500]],
+          "property": "z"
+        }
+      }
+    },
+    {
+      "id": "points-2",
+      "type": "circle",
+      "source": "crater",
+      "source-layer": "lidar",
+      "filter": [">", "z", 25],
+      "paint": {
+        "circle-radius": 1.1,
+        "circle-color": "#C27699",
+        "circle-z-offset": {
+          "stops": [[0, 0], [500, 500]],
+          "property": "z"
+        }
+      }
+    },
+    {
+      "id": "points-3",
+      "type": "circle",
+      "source": "crater",
+      "source-layer": "lidar",
+      "filter": [">", "z", 75],
+      "paint": {
+        "circle-radius": 1.1,
+        "circle-color": "#F28571",
+        "circle-z-offset": {
+          "stops": [[0, 0], [500, 500]],
+          "property": "z"
+        }
+      }
+    }
+  ]
+}

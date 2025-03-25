@@ -78,11 +78,10 @@
     const r = /tileSize=\d+/;
     const br = /resampling=[a-z]+/;
     const query = new URLSearchParams(window.location.search);
-    const tileset = query.get("tileset") || "watercolor";
+    
     const tileSize = parseInt(query.get("tileSize")) || 256;
     const resampling = query.get("resampling") || "linear";
-    let imgFormat = "jpg";
-    if (tileset === "toner") imgFormat = "png"
+
     if (!query.get("tileSize")) {
         query.set("tileSize", tileSize);
         window.location.search = query.toString();
@@ -122,7 +121,7 @@
                 'raster-tiles': {
                     'type': 'raster',
                     'tiles': [
-                        `https://stamen-tiles-b.a.ssl.fastly.net/${tileset}/{z}/{x}/{y}.${imgFormat}`
+                    "https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
                     ],
                     'tileSize': tileSize,
                     'attribution':
